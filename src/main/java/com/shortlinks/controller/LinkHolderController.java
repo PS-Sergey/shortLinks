@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -36,8 +37,9 @@ public class LinkHolderController {
         return service.getFullLinkByShortLink(form);
     }
 
-    @GetMapping("/redir/{shortLink}")
-    public void redirect(@PathVariable String shortLink, HttpServletResponse httpResponse) throws IOException {
+    @GetMapping("/redir/*")
+    public void redirect(HttpServletRequest request, HttpServletResponse httpResponse) throws IOException {
+        String shortLink = request.getRequestURL().toString();
         String fullLink = service.getLinkForRedirect(shortLink);
         httpResponse.sendRedirect(fullLink);
     }
