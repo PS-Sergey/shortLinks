@@ -6,7 +6,9 @@ public interface LinkHolderCustomRepository {
 
     boolean isExistFullLink(String fullLink);
 
-    String getShortLinkByLongLink(String fullLink);
+    boolean isExistShortLink(String shortLink);
+
+    String getShortLinkByFullLink(String fullLink);
 
     String getFullLinkByShortLink(String shortLink);
 

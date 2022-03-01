@@ -1,6 +1,9 @@
 package com.shortlinks.controller;
 
-import com.shortlinks.form.LinkForm;
+import com.shortlinks.dto.FullLinkDto;
+import com.shortlinks.dto.ShortLinkDto;
+import com.shortlinks.form.FullLinkForm;
+import com.shortlinks.form.ShortLinkForm;
 import com.shortlinks.service.LinkHolderService;
 import com.shortlinks.service.LinkHolderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +26,14 @@ public class LinkHolderController {
 
     @PostMapping("/shortLink")
     @ResponseBody
-    public ResponseEntity<String> getShortLink(@RequestBody LinkForm form) {
+    public ResponseEntity<ShortLinkDto> getShortLink(@RequestBody FullLinkForm form) {
         return service.saveLink(form);
+    }
+
+    @PostMapping("/fullLink")
+    @ResponseBody
+    public ResponseEntity<FullLinkDto> getFullLink(@RequestBody ShortLinkForm form) {
+        return service.getFullLinkByShortLink(form);
     }
 
     @GetMapping("/redir/{shortLink}")

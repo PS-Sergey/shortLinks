@@ -1,8 +1,12 @@
-package com.shortlinks.form;
+package com.shortlinks.dto;
 
-public class LinkForm {
+public class FullLinkDto {
 
     private String fullLink;
+
+    public FullLinkDto(String fullLink) {
+        this.fullLink = fullLink;
+    }
 
     public String getFullLink() {
         return fullLink;

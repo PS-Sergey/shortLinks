@@ -27,7 +27,14 @@ public class LinkHolderCustomRepositoryImpl implements LinkHolderCustomRepositor
     }
 
     @Override
-    public String getShortLinkByLongLink(String fullLink) {
+    public boolean isExistShortLink(String shortLink) {
+        String sql = "select count(SHORT_LINK) from LINK_HOLDER where SHORT_LINK = :shortLink";
+        MapSqlParameterSource params = new MapSqlParameterSource("shortLink", shortLink);
+        return jdbcTemplate.queryForObject(sql, params, Integer.class) > 0;
+    }
+
+    @Override
+    public String getShortLinkByFullLink(String fullLink) {
         String sql = "select SHORT_LINK from LINK_HOLDER where FULL_LINK = :fullLink";
         MapSqlParameterSource params = new MapSqlParameterSource("fullLink", fullLink);
         return jdbcTemplate.queryForObject(sql, params, String.class);
