@@ -7,6 +7,7 @@ import com.shortlinks.entity.LinkHolder;
 import com.shortlinks.form.FullLinkForm;
 import com.shortlinks.form.ShortLinkForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ import java.util.regex.Pattern;
 public class LinkHolderServiceImpl implements LinkHolderService{
 
     private LinkHolderCustomRepository repository;
+
+    @Value("${server.port}")
+    private String port;
 
     @Autowired
     public LinkHolderServiceImpl(LinkHolderCustomRepository repository) {
@@ -33,7 +37,6 @@ public class LinkHolderServiceImpl implements LinkHolderService{
         if (matchFullLink.find()) {
             linkHolder.setFullLink(matchFullLink.group(0));
         } else {
-            System.out.printf("%s not a link", form.getFullLink());
             throw new IllegalArgumentException(String.format("%s not a link", form.getFullLink()));
         }
         ShortLinkDto response = new ShortLinkDto();
@@ -44,7 +47,7 @@ public class LinkHolderServiceImpl implements LinkHolderService{
             Pattern patShortLink = Pattern.compile("(?<=^(http|https):\\/\\/(www\\.)?)([A-Za-z0-9]{1}[A-Za-z0-9\\-]*\\.?)*(?=\\.{1}[A-Za-z0-9-]{2,8}((\\/[A-Za-z0-9]*)*))");
             Matcher matchShortLink = patShortLink.matcher(form.getFullLink());
             matchShortLink.find();
-            String shortLink = "http://localhost:8080/app/redir/" + matchShortLink.group(0);
+            String shortLink = "http://localhost:" + port + "/app/redir/" + matchShortLink.group(0);
             linkHolder.setShortLink(shortLink + (repository.countOfShortLink(shortLink) + 1));
             response.setShortLink(repository.saveLink(linkHolder));
         }
@@ -62,6 +65,9 @@ public class LinkHolderServiceImpl implements LinkHolderService{
 
     @Override
     public String getLinkForRedirect(String shortLink) {
+        if (!repository.isExistShortLink(shortLink)) {
+            throw new EntityNotFoundException(String.format("Short link %s not exist", shortLink));
+        }
         return repository.getFullLinkByShortLink(shortLink);
     }
 }
